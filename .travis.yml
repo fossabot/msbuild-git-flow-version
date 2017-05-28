@@ -1,0 +1,10 @@
+dist: trusty
+language: csharp
+mono: none
+dotnet: 1.0.4
+solution: JarrodDavis.GitFlowVersion.sln
+install:
+  - dotnet restore
+script:
+  - dotnet build
+  - dotnet test tests/**/*.Tests.csproj
