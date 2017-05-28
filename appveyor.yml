@@ -4,4 +4,4 @@ build_script:
 - cmd: dotnet restore
 - cmd: dotnet build
 test_script:
-- cmd: dotnet test tests/**/*.Tests.csproj
+- cmd: dotnet test tests\**\*.Tests.csproj
