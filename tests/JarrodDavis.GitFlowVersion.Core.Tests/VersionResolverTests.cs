@@ -22,7 +22,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             [CombinatorialValues(null, "", " ")]
             string baseBranchName,
             [SemanticVersionCombinatorialValues(null, "0.1.0-preview4", "1.0.0-rc")]
-            SemanticVersion previousStableReleaseVersion,
+            SemanticVersion mostRecentStableReleaseVersion,
             [CombinatorialValues(-10, -5, -1)]
             int commitsSincePreviousStableVersion
         )
@@ -32,7 +32,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             {
                 CurrentBranchName = currentBranchName,
                 BaseBranchName = baseBranchName,
-                PreviousStableReleaseVersion = previousStableReleaseVersion,
+                MostRecentStableReleaseVersion = mostRecentStableReleaseVersion,
                 CommitsSincePreviousStableRelease = commitsSincePreviousStableVersion
             };
 

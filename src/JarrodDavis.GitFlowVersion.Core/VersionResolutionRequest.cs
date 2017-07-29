@@ -8,7 +8,7 @@ namespace JarrodDavis.GitFlowVersion.Core
 
         public string BaseBranchName { get; set; }
 
-        public SemanticVersion PreviousStableReleaseVersion { get; set; }
+        public SemanticVersion MostRecentStableReleaseVersion { get; set; }
 
         public int CommitsSincePreviousStableRelease { get; set; }
     }
