@@ -23,35 +23,6 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [PairwiseData]
-        public void VersionResolverShouldThrowForInvalidArguments(
-            [CombinatorialValues(null, "", " ")]
-            string currentBranchName,
-            [CombinatorialValues(null, "", " ")]
-            string baseBranchName,
-            [SemanticVersionCombinatorialValues(null, "0.1.0-preview4", "1.0.0-rc")]
-            SemanticVersion mostRecentStableReleaseVersion,
-            [CombinatorialValues(-10, -5, -1)]
-            int commitsSinceStableVersion
-        )
-        {
-            // Arrange
-            var request = new VersionResolutionRequest
-            {
-                CurrentBranchName = currentBranchName,
-                BaseBranchName = baseBranchName,
-                MostRecentStableReleaseVersion = mostRecentStableReleaseVersion,
-                CommitsSinceStableRelease = commitsSinceStableVersion
-            };
-
-            // Act
-            Action action = () => _systemUnderTest.ResolveVersion(request);
-
-            // Assert
-            action.ShouldThrow<ArgumentException>();
-        }
-
-        [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
