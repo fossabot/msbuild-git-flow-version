@@ -34,17 +34,17 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.Stable,
+            category.Should().Be((BranchCategory.Stable, null),
                 because: $"'{branchName}' is always a Stable branch");
         }
 
         [Theory]
-        [InlineData("release/0.1.0")]
-        [InlineData("release/0.1.1")]
-        [InlineData("release/1.0.0")]
-        [InlineData("release/1.1.0")]
-        [InlineData("release/1.1.1")]
-        public void MapperShouldMapValidReleaseBranchName(string branchName)
+        [InlineData("release/0.1.0", "0.1.0")]
+        [InlineData("release/0.1.1", "0.1.1")]
+        [InlineData("release/1.0.0", "1.0.0")]
+        [InlineData("release/1.1.0", "1.1.0")]
+        [InlineData("release/1.1.1", "1.1.1")]
+        public void MapperShouldMapValidReleaseBranchName(string branchName, string expectedSuffix)
         {
             // Arrange
 
@@ -52,7 +52,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.ReleaseCandidate,
+            category.Should().Be((BranchCategory.ReleaseCandidate, expectedSuffix),
                 because: $"'{branchName}' is a valid release branch");
         }
 
@@ -73,15 +73,15 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.Unknown,
+            category.Should().Be((BranchCategory.Unknown, null),
                 because: $"'{branchName}' is not a valid release branch");
         }
 
         [Theory]
-        [InlineData("hotfix/0.1.1")]
-        [InlineData("hotfix/1.0.1")]
-        [InlineData("hotfix/1.1.1")]
-        public void MapperShouldMapValidHotfixBranchName(string branchName)
+        [InlineData("hotfix/0.1.1", "0.1.1")]
+        [InlineData("hotfix/1.0.1", "1.0.1")]
+        [InlineData("hotfix/1.1.1", "1.1.1")]
+        public void MapperShouldMapValidHotfixBranchName(string branchName, string expectedSuffix)
         {
             // Arrange
 
@@ -89,7 +89,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.ReleaseCandidate,
+            category.Should().Be((BranchCategory.ReleaseCandidate, expectedSuffix),
                 because: $"'{branchName} is a valid hotfix branch");
         }
 
@@ -110,7 +110,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.Unknown,
+            category.Should().Be((BranchCategory.Unknown, null),
                 because: $"'{branchName}' is not a valid hotfix branch");
         }
 
@@ -124,16 +124,16 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.BetaQuality,
+            category.Should().Be((BranchCategory.BetaQuality, null),
                 because: $"'{branchName}' is always a Beta Quality branch");
         }
 
         [Theory]
-        [InlineData("feature/add-cool-feature")]
-        [InlineData("feature/123")]
-        [InlineData("feature/PROJ-123")]
-        [InlineData("feature/do-something-really-really-awesome")]
-        public void MapperShouldMapValidFeatureBranchName(string branchName)
+        [InlineData("feature/add-cool-feature", "add-cool-feature")]
+        [InlineData("feature/123", "123")]
+        [InlineData("feature/PROJ-123", "PROJ-123")]
+        [InlineData("feature/do-something-really-really-awesome", "do-something-really-really-awesome")]
+        public void MapperShouldMapValidFeatureBranchName(string branchName, string expectedSuffix)
         {
             // Arrange
 
@@ -141,7 +141,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.AlphaQuality,
+            category.Should().Be((BranchCategory.AlphaQuality, expectedSuffix),
                 because: $"'{branchName}' is a valid feature branch");
         }
 
@@ -162,16 +162,16 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.Unknown,
+            category.Should().Be((BranchCategory.Unknown, null),
                 because: $"'{branchName}' is not a valid feature branch");
         }
 
         [Theory]
-        [InlineData("bugfix/fix-thing")]
-        [InlineData("bugfix/124")]
-        [InlineData("bugfix/PROJ-123")]
-        [InlineData("bugfix/fix-thing-that-is-broken-really-bad")]
-        public void MapperShouldMapValidBugfixBranchName(string branchName)
+        [InlineData("bugfix/fix-thing", "fix-thing")]
+        [InlineData("bugfix/124", "124")]
+        [InlineData("bugfix/PROJ-124", "PROJ-124")]
+        [InlineData("bugfix/fix-thing-that-is-broken-really-bad", "fix-thing-that-is-broken-really-bad")]
+        public void MapperShouldMapValidBugfixBranchName(string branchName, string expectedSuffix)
         {
             // Arrange
 
@@ -179,7 +179,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.AlphaQuality,
+            category.Should().Be((BranchCategory.AlphaQuality, expectedSuffix),
                 because: $"'{branchName}' is a valid bugfix branch");
         }
 
@@ -200,7 +200,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.Unknown,
+            category.Should().Be((BranchCategory.Unknown, null),
                 because: $"'{branchName}' is not a valid bugfix branch");
         }
 
@@ -214,7 +214,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.AlphaQuality,
+            category.Should().Be((BranchCategory.AlphaQuality, "DETACHED"),
                 because: $"Detached HEAD should always be mapped to Alpha Quality");
         }
 
@@ -231,7 +231,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             var category = _systemUnderTest.MapBranchName(branchName);
 
             // Assert
-            category.Should().Be(BranchCategory.Unknown,
+            category.Should().Be((BranchCategory.Unknown, null),
                 because: $"'{branchName}' is not a valid git-flow branch");
         }
     }

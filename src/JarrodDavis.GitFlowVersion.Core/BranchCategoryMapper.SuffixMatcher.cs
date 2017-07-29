@@ -16,8 +16,16 @@ namespace JarrodDavis.GitFlowVersion.Core
                 _prefix = prefix;
             }
 
-            public bool IsValidBranchName(string branchName) =>
-                branchName.StartsWith(_prefix) && IsValidSuffix(branchName.Substring(_prefix.Length));
+            public (BranchCategory Category, string Suffix) MatchSuffix(string branchName)
+            {
+                if (!branchName.StartsWith(_prefix))
+                {
+                    return (BranchCategory.Unknown, null);
+                }
+
+                var suffix = branchName.Substring(_prefix.Length);
+                return IsValidSuffix(suffix) ? (Category, suffix) : (BranchCategory.Unknown, null);
+            }
 
             protected abstract bool IsValidSuffix(string suffix);
         }

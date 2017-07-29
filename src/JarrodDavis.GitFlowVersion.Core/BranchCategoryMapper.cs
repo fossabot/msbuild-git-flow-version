@@ -7,18 +7,18 @@ namespace JarrodDavis.GitFlowVersion.Core
 {
     public partial class BranchCategoryMapper : IBranchCategoryMapper
     {
-        private IDictionary<string, BranchCategory> _simpleMatchers;
+        private IDictionary<string, (BranchCategory, string)> _simpleMatchers;
         private SuffixMatcher[] _suffixMatchers;
 
         public BranchCategoryMapper(IOptions<BranchCategoryMappingOptions> options)
         {
             var names = options.Value;
 
-            _simpleMatchers = new Dictionary<string, BranchCategory>
+            _simpleMatchers = new Dictionary<string, (BranchCategory, string)>
             {
-                { names.StableBranchName, BranchCategory.Stable },
-                { names.BetaQualityBranchName, BranchCategory.BetaQuality },
-                { names.DetachedHeadName, BranchCategory.AlphaQuality }
+                { names.StableBranchName, (BranchCategory.Stable, null) },
+                { names.BetaQualityBranchName, (BranchCategory.BetaQuality, null) },
+                { names.DetachedHeadName, (BranchCategory.AlphaQuality, names.DetachedHeadName) }
             };
 
             _suffixMatchers = new SuffixMatcher[]
@@ -30,7 +30,7 @@ namespace JarrodDavis.GitFlowVersion.Core
             };
         }
 
-        public BranchCategory MapBranchName(string branchName)
+        public (BranchCategory Category, string Suffix) MapBranchName(string branchName)
         {
             if (branchName is null)
             {
@@ -42,11 +42,12 @@ namespace JarrodDavis.GitFlowVersion.Core
                 throw new ArgumentException("Branch name cannot be empty or whitespace", nameof(branchName));
             }
 
-            return _simpleMatchers.TryGetValue(branchName, out BranchCategory category)
-                ? category
-                : _suffixMatchers.FirstOrDefault(
-                    matcher => matcher.IsValidBranchName(branchName)
-                )?.Category ?? BranchCategory.Unknown;
+            return _simpleMatchers.TryGetValue(branchName, out (BranchCategory, string) match)
+                ? match
+                : _suffixMatchers.Select(matcher => matcher.MatchSuffix(branchName))
+                                 .FirstOrDefault(
+                                     possibleMatch => possibleMatch.Category != BranchCategory.Unknown
+                                 );
         }
     }
 }
