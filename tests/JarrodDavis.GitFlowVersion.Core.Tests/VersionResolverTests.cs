@@ -12,7 +12,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
 
         public VersionResolverTests()
         {
-            _systemUnderTest = new VersionResolver();
+            _systemUnderTest = new VersionResolver(null);
             _request = new VersionResolutionRequest
             {
                 CurrentBranchName = "feature/add-cool-feature",
