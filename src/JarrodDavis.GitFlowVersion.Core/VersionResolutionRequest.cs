@@ -10,6 +10,6 @@ namespace JarrodDavis.GitFlowVersion.Core
 
         public SemanticVersion MostRecentStableReleaseVersion { get; set; }
 
-        public int CommitsSincePreviousStableRelease { get; set; }
+        public int CommitsSinceStableRelease { get; set; }
     }
 }
