@@ -1,21 +1,33 @@
 using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Options;
-using NuGet.Versioning;
-using static JarrodDavis.GitFlowVersion.Core.BranchCategory;
 
 namespace JarrodDavis.GitFlowVersion.Core
 {
-    public class BranchCategoryMapper : IBranchCategoryMapper
+    public partial class BranchCategoryMapper : IBranchCategoryMapper
     {
-        // Only alphanumeric (and the hyphen) characters are allowed
-        private static readonly Regex AlphaQualitySuffixPattern = new Regex("^[a-zA-Z0-9-]+$");
-
-        private BranchCategoryMappingOptions _options;
+        private IDictionary<string, BranchCategory> _simpleMatchers;
+        private SuffixMatcher[] _suffixMatchers;
 
         public BranchCategoryMapper(IOptions<BranchCategoryMappingOptions> options)
         {
-            _options = options.Value;
+            var names = options.Value;
+
+            _simpleMatchers = new Dictionary<string, BranchCategory>
+            {
+                { names.StableBranchName, BranchCategory.Stable },
+                { names.BetaQualityBranchName, BranchCategory.BetaQuality },
+                { names.DetachedHeadName, BranchCategory.AlphaQuality }
+            };
+
+            _suffixMatchers = new SuffixMatcher[]
+            {
+                new ReleaseCandidateSuffixMatcher(names.ReleaseBranchNamePrefix),
+                new ReleaseCandidateSuffixMatcher(names.HotfixBranchNamePrefix),
+                new AlphaQualitySuffixMatcher(names.FeatureBranchNamePrefix),
+                new AlphaQualitySuffixMatcher(names.BugfixBranchNamePrefix)
+            };
         }
 
         public BranchCategory MapBranchName(string branchName)
@@ -30,54 +42,11 @@ namespace JarrodDavis.GitFlowVersion.Core
                 throw new ArgumentException("Branch name cannot be empty or whitespace", nameof(branchName));
             }
 
-            if (branchName == _options.StableBranchName)
-            {
-                return Stable;
-            }
-
-            if (branchName.StartsWith(_options.ReleaseBranchNamePrefix))
-            {
-                var suffix = GetBranchSuffix(branchName, _options.ReleaseBranchNamePrefix);
-                return IsValidReleaseCandidateSuffix(suffix) ? ReleaseCandidate : Unknown;
-            }
-
-            if (branchName.StartsWith(_options.HotfixBranchNamePrefix))
-            {
-                var suffix = GetBranchSuffix(branchName, _options.HotfixBranchNamePrefix);
-                return IsValidReleaseCandidateSuffix(suffix) ? ReleaseCandidate : Unknown;
-            }
-
-            if (branchName == _options.BetaQualityBranchName)
-            {
-                return BetaQuality;
-            }
-
-            if (branchName.StartsWith(_options.FeatureBranchNamePrefix))
-            {
-                var suffix = GetBranchSuffix(branchName, _options.FeatureBranchNamePrefix);
-                return IsValidAlphaQualitySuffix(suffix) ? AlphaQuality : Unknown;
-            }
-
-            if (branchName.StartsWith(_options.BugfixBranchNamePrefix))
-            {
-                var suffix = GetBranchSuffix(branchName, _options.BugfixBranchNamePrefix);
-                return IsValidAlphaQualitySuffix(suffix) ? AlphaQuality : Unknown;
-            }
-
-            if (branchName == _options.DetachedHeadName)
-            {
-                return AlphaQuality;
-            }
-
-            return BranchCategory.Unknown;
+            return _simpleMatchers.TryGetValue(branchName, out BranchCategory category)
+                ? category
+                : _suffixMatchers.FirstOrDefault(
+                    matcher => matcher.IsValidBranchName(branchName)
+                )?.Category ?? BranchCategory.Unknown;
         }
-
-        private string GetBranchSuffix(string branchName, string prefix) =>
-            branchName.Substring(prefix.Length);
-
-        private bool IsValidReleaseCandidateSuffix(string suffix) =>
-            SemanticVersion.TryParse(suffix, out SemanticVersion version) && !version.IsPrerelease;
-
-        private bool IsValidAlphaQualitySuffix(string suffix) => AlphaQualitySuffixPattern.IsMatch(suffix);
     }
 }
