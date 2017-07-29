@@ -45,6 +45,27 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
+        [InlineData("release")]
+        [InlineData("release/")]
+        [InlineData("release/fantastic-release")]
+        [InlineData("release/-1")]
+        [InlineData("release/0.1.0-preview4")]
+        [InlineData("release/0")]
+        [InlineData("release/0.1")]
+        [InlineData("release/1.1.0.4")]
+        public void MapperShouldNotMapInvalidReleaseBranchName(string branchName)
+        {
+            // Arrange
+
+            // Act
+            var category = _systemUnderTest.MapBranchName(branchName);
+
+            // Assert
+            category.Should().Be(BranchCategory.Unknown,
+                because: $"'{branchName}' is not a valid release branch");
+        }
+
+        [Theory]
         [InlineData("hotfix/0.1.1")]
         [InlineData("hotfix/1.0.1")]
         [InlineData("hotfix/1.1.1")]
@@ -58,6 +79,27 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             // Assert
             category.Should().Be(BranchCategory.ReleaseCandidate,
                 because: $"'{branchName} is a valid hotfix branch");
+        }
+
+        [Theory]
+        [InlineData("hotfix")]
+        [InlineData("hotfix/")]
+        [InlineData("hotfix/quick-fix")]
+        [InlineData("hotfix/-2")]
+        [InlineData("hotfix/0.1.1-rc")]
+        [InlineData("hotfix/0")]
+        [InlineData("hotfix/0.1")]
+        [InlineData("hotfix/1.0.1.1")]
+        public void MapperShouldNotMapInvalidHotfixBranchName(string branchName)
+        {
+            // Arrange
+
+            // Act
+            var category = _systemUnderTest.MapBranchName(branchName);
+
+            // Assert
+            category.Should().Be(BranchCategory.Unknown,
+                because: $"'{branchName}' is not a valid hotfix branch");
         }
 
         [Fact]
@@ -92,6 +134,25 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
+        [InlineData("feature")]
+        [InlineData("feature/")]
+        [InlineData("feature/.")]
+        [InlineData("feature/.add-cool-feature")]
+        [InlineData("feature/+")]
+        [InlineData("feature/+add-cool-feature")]
+        public void MapperShouldNotMapInvalidFeatureBranchName(string branchName)
+        {
+            // Arrange
+
+            // Act
+            var category = _systemUnderTest.MapBranchName(branchName);
+
+            // Assert
+            category.Should().Be(BranchCategory.Unknown,
+                because: $"'{branchName}' is not a valid feature branch");
+        }
+
+        [Theory]
         [InlineData("bugfix/fix-thing")]
         [InlineData("bugfix/124")]
         [InlineData("bugfix/PROJ-123")]
@@ -108,6 +169,25 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
                 because: $"'{branchName}' is a valid bugfix branch");
         }
 
+        [Theory]
+        [InlineData("bugfix")]
+        [InlineData("bugfix/")]
+        [InlineData("bugfix/.")]
+        [InlineData("bugfix/.fix-thing")]
+        [InlineData("bugfix/+")]
+        [InlineData("bugfix/+fix-thing")]
+        public void MapperShouldNotMapInvalidBugfixBranchName(string branchName)
+        {
+            // Arrange
+
+            // Act
+            var category = _systemUnderTest.MapBranchName(branchName);
+
+            // Assert
+            category.Should().Be(BranchCategory.Unknown,
+                because: $"'{branchName}' is not a valid bugfix branch");
+        }
+
         [Fact]
         public void MapperShouldMapDetachedHead()
         {
@@ -120,6 +200,23 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             // Assert
             category.Should().Be(BranchCategory.AlphaQuality,
                 because: $"Detached HEAD should always be mapped to Alpha Quality");
+        }
+
+        [Theory]
+        [InlineData("master_old")]
+        [InlineData("develop/something")]
+        [InlineData("some-cool-feature")]
+        [InlineData("2017/some-new-feature")]
+        public void MapperShouldNotMapInvalidBranchName(string branchName)
+        {
+            // Arrange
+
+            // Act
+            var category = _systemUnderTest.MapBranchName(branchName);
+
+            // Assert
+            category.Should().Be(BranchCategory.Unknown,
+                because: $"'{branchName}' is not a valid git-flow branch");
         }
     }
 }
