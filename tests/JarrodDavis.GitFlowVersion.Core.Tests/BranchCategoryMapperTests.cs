@@ -150,8 +150,10 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData("feature/")]
         [InlineData("feature/.")]
         [InlineData("feature/.add-cool-feature")]
+        [InlineData("feature/add.cool-feature")]
         [InlineData("feature/+")]
         [InlineData("feature/+add-cool-feature")]
+        [InlineData("feature/add+cool-feature")]
         public void MapperShouldNotMapInvalidFeatureBranchName(string branchName)
         {
             // Arrange
@@ -186,8 +188,10 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData("bugfix/")]
         [InlineData("bugfix/.")]
         [InlineData("bugfix/.fix-thing")]
+        [InlineData("bugfix/fix.thing")]
         [InlineData("bugfix/+")]
         [InlineData("bugfix/+fix-thing")]
+        [InlineData("bugfix/fix+thing")]
         public void MapperShouldNotMapInvalidBugfixBranchName(string branchName)
         {
             // Arrange
