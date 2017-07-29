@@ -15,7 +15,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [CombinatorialData]
+        [PairwiseData]
         public void VersionResolverShouldThrowForInvalidArguments(
             [CombinatorialValues(null, "", " ")]
             string currentBranchName,
