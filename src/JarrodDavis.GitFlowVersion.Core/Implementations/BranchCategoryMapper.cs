@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using JarrodDavis.GitFlowVersion.Core.Configuration;
 using JarrodDavis.GitFlowVersion.Core.Contracts;
+
 using Microsoft.Extensions.Options;
 
 namespace JarrodDavis.GitFlowVersion.Core.Implementations

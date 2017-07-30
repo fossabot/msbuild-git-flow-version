@@ -1,8 +1,12 @@
 using System;
-using FluentAssertions;
+
 using JarrodDavis.GitFlowVersion.Core.Contracts;
 using JarrodDavis.GitFlowVersion.Core.Implementations;
+
+using FluentAssertions;
+
 using NuGet.Versioning;
+
 using Xunit;
 
 namespace JarrodDavis.GitFlowVersion.Core.Tests

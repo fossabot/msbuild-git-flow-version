@@ -1,4 +1,5 @@
 using System;
+
 using JarrodDavis.GitFlowVersion.Core.Contracts;
 
 namespace JarrodDavis.GitFlowVersion.Core.Implementations

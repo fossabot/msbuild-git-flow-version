@@ -1,5 +1,7 @@
 using System.Text.RegularExpressions;
+
 using JarrodDavis.GitFlowVersion.Core.Contracts;
+
 using NuGet.Versioning;
 
 namespace JarrodDavis.GitFlowVersion.Core.Implementations

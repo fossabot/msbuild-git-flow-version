@@ -1,12 +1,18 @@
 using System;
-using FluentAssertions;
+
 using JarrodDavis.GitFlowVersion.Core.Configuration;
 using JarrodDavis.GitFlowVersion.Core.Contracts;
 using JarrodDavis.GitFlowVersion.Core.Implementations;
+
+using FluentAssertions;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Moq;
+
 using NuGet.Versioning;
+
 using Xunit;
 
 namespace JarrodDavis.GitFlowVersion.Core.Tests
