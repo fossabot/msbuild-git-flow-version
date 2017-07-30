@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\JarrodDavis.GitFlowVersion.Core\JarrodDavis.GitFlowVersion.Core.csproj" />
+    <ProjectReference Include="..\JarrodDavis.Extensions.Logging.Xunit\JarrodDavis.Extensions.Logging.Xunit.csproj" />
   </ItemGroup>
 
 </Project>
