@@ -64,7 +64,7 @@ namespace JarrodDavis.GitFlowVersion.Core
                     _logger.LogInformation(
                         "Current branch {currentBranch} is a Stable branch with version {version}",
                         request.CurrentBranchName, request.MostRecentStableReleaseVersion);
-                    return request.MostRecentStableReleaseVersion;
+                    return new SemanticVersion(request.MostRecentStableReleaseVersion);
                 default:
                     throw new NotImplementedException($"Unexpected branch category '${match.Category}'");
             }
