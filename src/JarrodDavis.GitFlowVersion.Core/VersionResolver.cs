@@ -33,6 +33,18 @@ namespace JarrodDavis.GitFlowVersion.Core
                 request.CurrentBranchName);
             var match = _branchCategoryMapper.MapBranchName(request.CurrentBranchName);
 
+            if (request.MostRecentStableReleaseVersion is null)
+            {
+                _logger.LogInformation("No stable release version given; assuming 0.0.0");
+                request = new VersionResolutionRequest
+                {
+                    CurrentBranchName = request.CurrentBranchName,
+                    BaseBranchName = request.BaseBranchName,
+                    CommitsSinceStableRelease = 0, // TODO
+                    MostRecentStableReleaseVersion = new SemanticVersion(0, 0, 0)
+                };
+            }
+
             var version = ResolveVersionCore(request, match);
 
             _logger.LogInformation("Resolved version {version} for current branch {currentBranch}",
@@ -84,6 +96,13 @@ namespace JarrodDavis.GitFlowVersion.Core
 
             SemanticVersion GenerateAlphaVersion(SemanticVersion baseVersion)
             {
+                if (baseVersion is null)
+                {
+                    _logger.LogError("Could not resolve base version for base branch {baseBranch}",
+                        request.BaseBranchName);
+                    return null;
+                }
+
                 _logger.LogDebug("Resolved version {baseVersion} for base branch {baseBranch}",
                     baseVersion, request.BaseBranchName);
                 return new SemanticVersion(
@@ -118,6 +137,12 @@ namespace JarrodDavis.GitFlowVersion.Core
 
         private SemanticVersion ResolveBetaQuality(SemanticVersion previousStable)
         {
+            if (previousStable is null)
+            {
+                _logger.LogError("Unexpected null previous version for Beta Quality resolution request");
+                return null;
+            }
+
             _logger.LogDebug("Resolving Beta Quality version for previous stable release {previousStable}",
                 previousStable);
             return new SemanticVersion(
@@ -132,14 +157,18 @@ namespace JarrodDavis.GitFlowVersion.Core
         {
             _logger.LogDebug("Resolving Release Candidate version for branch suffix {suffix}", suffix);
 
-            return !SemanticVersion.TryParse(suffix, out SemanticVersion version)
-                ? null
-                : new SemanticVersion(
+            if (SemanticVersion.TryParse(suffix, out SemanticVersion version))
+            {
+                return new SemanticVersion(
                     major: version.Major,
                     minor: version.Minor,
                     patch: version.Patch,
                     releaseLabel: _prereleaseLabels.ReleaseCandidate
                 );
+            }
+
+            _logger.LogError("Could not parse version from Release Candidate suffix {suffix}", suffix);
+            return null;
         }
     }
 }
