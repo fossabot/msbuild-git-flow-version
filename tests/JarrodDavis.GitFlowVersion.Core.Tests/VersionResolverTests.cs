@@ -28,11 +28,6 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             _validator = new Mock<IVersionResolutionRequestValidator>();
         }
 
-        public VersionResolver ArrangeResolver() => new VersionResolver(_branchCategoryMapper.Object,
-                                                                        _logger.Object,
-                                                                        _options,
-                                                                        _validator.Object);
-
         [Fact]
         public void ResolverShouldThrowForInvalidArguments()
         {
@@ -58,6 +53,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         public void ResolverShouldResolveStableVersionWithCurrentVersion(string branch,
                                                                          string stableVersionString)
         {
+            // Arrange
             var stableVersion = SemanticVersion.Parse(stableVersionString);
             var request = new VersionResolutionRequest
             {
@@ -67,10 +63,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
                 CommitsSinceStableRelease = 0
             };
 
-            _validator.Setup(validator => validator.ValidateRequest(request));
-            _branchCategoryMapper.Setup(mapper => mapper.MapBranchName(branch))
-                                 .Returns((BranchCategory.Stable, null));
-
+            SetupDependencies(request, BranchCategory.Stable, branchSuffix: null);
             var systemUnderTest = ArrangeResolver();
 
             // Act
@@ -86,32 +79,21 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData("rel/1.0.0", "1.0.0", "0.1.0")]
         [InlineData("rc/1.1.0", "1.1.0", "1.0.1")]
         public void ResolverShouldResolveReleaseCandidateVersionFromBranchSuffix(
-            string branch, string expectedVersionString, string stableVersionString)
+            string branch, string expectedVersionSuffix, string stableVersionString)
         {
             // Arrange
-            var expectedVersion = SemanticVersion.Parse(expectedVersionString);
-            expectedVersion = new SemanticVersion(
-                major: expectedVersion.Major,
-                minor: expectedVersion.Minor,
-                patch: expectedVersion.Patch,
-                releaseLabel: "rc"
-            );
-            var stableVersion = stableVersionString is null
-                ? null
-                : SemanticVersion.Parse(stableVersionString);
+            var expectedVersion = ParseExpectedPrereleaseVersion(expectedVersionSuffix,
+                                                                 prereleaseLabel: "rc");
 
             var request = new VersionResolutionRequest
             {
                 CurrentBranchName = branch,
                 BaseBranchName = "develop",
                 CommitsSinceStableRelease = 20,
-                MostRecentStableReleaseVersion = stableVersion
+                MostRecentStableReleaseVersion = ParseStableVersionString(stableVersionString)
             };
 
-            _validator.Setup(validator => validator.ValidateRequest(request));
-            _branchCategoryMapper.Setup(mapper => mapper.MapBranchName(branch))
-                                 .Returns((BranchCategory.ReleaseCandidate, expectedVersionString));
-
+            SetupDependencies(request, BranchCategory.ReleaseCandidate, expectedVersionSuffix);
             var systemUnderTest = ArrangeResolver();
 
             // Act
@@ -121,5 +103,34 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             resolvedVersion.Should().Be(expectedVersion,
                 because: $"the current branch {branch} is a correctly-suffixed Release Candidate branch");
         }
+
+        private SemanticVersion ParseExpectedPrereleaseVersion(string expectedVersionString,
+                                                               string prereleaseLabel)
+        {
+            var expectedVersion = SemanticVersion.Parse(expectedVersionString);
+            return new SemanticVersion(
+                major: expectedVersion.Major,
+                minor: expectedVersion.Minor,
+                patch: expectedVersion.Patch,
+                releaseLabel: prereleaseLabel
+            );
+        }
+
+        private SemanticVersion ParseStableVersionString(string stableVersionString) =>
+            stableVersionString is null ? null : SemanticVersion.Parse(stableVersionString);
+
+        private void SetupDependencies(VersionResolutionRequest request,
+                                       BranchCategory branchCategory,
+                                       string branchSuffix)
+        {
+            _validator.Setup(validator => validator.ValidateRequest(request));
+            _branchCategoryMapper.Setup(mapper => mapper.MapBranchName(request.CurrentBranchName))
+                                 .Returns((branchCategory, branchSuffix));
+        }
+
+        private VersionResolver ArrangeResolver() => new VersionResolver(_branchCategoryMapper.Object,
+                                                                         _logger.Object,
+                                                                         _options,
+                                                                         _validator.Object);
     }
 }
