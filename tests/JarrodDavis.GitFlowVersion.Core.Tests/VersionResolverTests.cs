@@ -85,8 +85,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             string branch, string expectedVersionSuffix, string stableVersionString)
         {
             // Arrange
-            var expectedVersion = ParseExpectedPrereleaseVersion(expectedVersionSuffix,
-                                                                 prereleaseLabel: "rc");
+            var expectedVersion = ParseExpectedPrereleaseVersion(expectedVersionSuffix, "rc");
 
             var request = new VersionResolutionRequest
             {
@@ -140,15 +139,60 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
                 branch, stableVersion);
         }
 
+        [Theory]
+        [InlineData("feature/add-cool-feature", null, "0.1.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature", "0.1.0", "0.2.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature", "0.1.1", "0.2.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature", "1.0.0", "1.1.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature", "1.0.1", "1.1.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature", "1.1.0", "1.2.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature", "1.1.1", "1.2.0", "add-cool-feature")]
+        [InlineData("bugfix/fix-thing", null, "0.1.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing", "0.1.0", "0.2.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing", "0.1.1", "0.2.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing", "1.0.0", "1.1.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing", "1.0.1", "1.1.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing", "1.1.0", "1.2.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing", "1.1.1", "1.2.0", "fix-thing")]
+        public void ResolverShouldResolveAlphaQualityVersionFromBetaQualityBase(
+            string branch, string stableVersionString, string expectedVersionString, string branchSuffix)
+        {
+            // Arrange
+            var expectedVersion = ParseExpectedPrereleaseVersion(
+                expectedVersionString, "alpha", branchSuffix);
+            var stableVersion = ParseStableVersionString(stableVersionString);
+            var request = new VersionResolutionRequest
+            {
+                CurrentBranchName = branch,
+                BaseBranchName = "develop",
+                MostRecentStableReleaseVersion = stableVersion
+            };
+
+            SetupDependencies(request, BranchCategory.AlphaQuality, branchSuffix);
+            _branchCategoryMapper.Setup(mapper => mapper.MapBranchName("develop"))
+                                 .Returns((BranchCategory.BetaQuality, null));
+            var systemUnderTest = ArrangeResolver();
+
+            // Act
+            var resolvedVersion = systemUnderTest.ResolveVersion(request);
+
+            // Assert
+            resolvedVersion.Should().Be(expectedVersion,
+                "because branch {0} should be strictly minor-version incremented from stable version {1}",
+                branch, stableVersion);
+            VerifyAllMocks();
+        }
+
         private SemanticVersion ParseExpectedPrereleaseVersion(string expectedVersionString,
-                                                               string prereleaseLabel)
+                                                               params string[] prereleaseLabels)
         {
             var expectedVersion = SemanticVersion.Parse(expectedVersionString);
             return new SemanticVersion(
                 major: expectedVersion.Major,
                 minor: expectedVersion.Minor,
                 patch: expectedVersion.Patch,
-                releaseLabel: prereleaseLabel
+                releaseLabels: prereleaseLabels,
+                metadata: null
             );
         }
 
