@@ -1,4 +1,7 @@
 using FluentAssertions;
+using JarrodDavis.GitFlowVersion.Core.Configuration;
+using JarrodDavis.GitFlowVersion.Core.Contracts;
+using JarrodDavis.GitFlowVersion.Core.Implementations;
 using Microsoft.Extensions.Options;
 using Xunit;
 

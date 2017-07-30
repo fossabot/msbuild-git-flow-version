@@ -1,8 +1,9 @@
 using System;
+using JarrodDavis.GitFlowVersion.Core.Contracts;
 
-namespace JarrodDavis.GitFlowVersion.Core
+namespace JarrodDavis.GitFlowVersion.Core.Implementations
 {
-    public class VersionResolutionRequestValidator : IVersionResolutionRequestValidator
+    internal class VersionResolutionRequestValidator : IVersionResolutionRequestValidator
     {
         public void ValidateRequest(VersionResolutionRequest request)
         {

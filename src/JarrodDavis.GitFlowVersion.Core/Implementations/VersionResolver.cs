@@ -1,11 +1,13 @@
 using System;
+using JarrodDavis.GitFlowVersion.Core.Configuration;
+using JarrodDavis.GitFlowVersion.Core.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NuGet.Versioning;
 
-namespace JarrodDavis.GitFlowVersion.Core
+namespace JarrodDavis.GitFlowVersion.Core.Implementations
 {
-    public class VersionResolver : IVersionResolver
+    internal class VersionResolver : IVersionResolver
     {
         private IBranchCategoryMapper _branchCategoryMapper;
         private ILogger<VersionResolver> _logger;

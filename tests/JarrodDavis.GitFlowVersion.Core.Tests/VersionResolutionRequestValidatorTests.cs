@@ -1,5 +1,7 @@
 using System;
 using FluentAssertions;
+using JarrodDavis.GitFlowVersion.Core.Contracts;
+using JarrodDavis.GitFlowVersion.Core.Implementations;
 using NuGet.Versioning;
 using Xunit;
 

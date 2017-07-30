@@ -1,9 +1,10 @@
 using System.Text.RegularExpressions;
+using JarrodDavis.GitFlowVersion.Core.Contracts;
 using NuGet.Versioning;
 
-namespace JarrodDavis.GitFlowVersion.Core
+namespace JarrodDavis.GitFlowVersion.Core.Implementations
 {
-    public partial class BranchCategoryMapper : IBranchCategoryMapper
+    internal partial class BranchCategoryMapper
     {
         private abstract class SuffixMatcher
         {

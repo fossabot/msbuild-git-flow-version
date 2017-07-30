@@ -1,4 +1,4 @@
-namespace JarrodDavis.GitFlowVersion.Core
+namespace JarrodDavis.GitFlowVersion.Core.Contracts
 {
     public enum BranchCategory
     {

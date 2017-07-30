@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JarrodDavis.GitFlowVersion.Core.Configuration;
+using JarrodDavis.GitFlowVersion.Core.Contracts;
 using Microsoft.Extensions.Options;
 
-namespace JarrodDavis.GitFlowVersion.Core
+namespace JarrodDavis.GitFlowVersion.Core.Implementations
 {
-    public partial class BranchCategoryMapper : IBranchCategoryMapper
+    internal partial class BranchCategoryMapper : IBranchCategoryMapper
     {
         private IDictionary<string, (BranchCategory, string)> _simpleMatchers;
         private SuffixMatcher[] _suffixMatchers;

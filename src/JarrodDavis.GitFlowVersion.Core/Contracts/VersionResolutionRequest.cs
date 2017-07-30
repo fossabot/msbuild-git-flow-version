@@ -1,6 +1,6 @@
 using NuGet.Versioning;
 
-namespace JarrodDavis.GitFlowVersion.Core
+namespace JarrodDavis.GitFlowVersion.Core.Contracts
 {
     public struct VersionResolutionRequest
     {
