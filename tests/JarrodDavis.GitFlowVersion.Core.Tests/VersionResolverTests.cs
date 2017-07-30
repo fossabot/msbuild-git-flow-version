@@ -59,8 +59,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             {
                 CurrentBranchName = branch,
                 BaseBranchName = null,
-                MostRecentStableReleaseVersion = stableVersion,
-                CommitsSinceStableRelease = 0
+                MostRecentStableReleaseVersion = stableVersion
             };
 
             SetupDependencies(request, BranchCategory.Stable);
@@ -93,7 +92,6 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             {
                 CurrentBranchName = branch,
                 BaseBranchName = "develop",
-                CommitsSinceStableRelease = 20,
                 MostRecentStableReleaseVersion = ParseStableVersionString(stableVersionString)
             };
 
@@ -127,7 +125,6 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             {
                 CurrentBranchName = branch,
                 BaseBranchName = "master",
-                CommitsSinceStableRelease = 5,
                 MostRecentStableReleaseVersion = stableVersion
             };
 

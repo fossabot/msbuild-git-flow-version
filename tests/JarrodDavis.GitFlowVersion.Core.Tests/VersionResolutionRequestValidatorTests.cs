@@ -17,8 +17,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             {
                 CurrentBranchName = "feature/add-cool-feature",
                 BaseBranchName = "develop",
-                MostRecentStableReleaseVersion = SemanticVersion.Parse("0.1.0"),
-                CommitsSinceStableRelease = 4
+                MostRecentStableReleaseVersion = SemanticVersion.Parse("0.1.0")
             };
         }
 
@@ -76,24 +75,6 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             action.ShouldThrow<ArgumentException>()
                   .And.ParamName
                   .Should().Be(nameof(_request.MostRecentStableReleaseVersion));
-        }
-
-        [Theory]
-        [InlineData(-1)]
-        [InlineData(-5)]
-        [InlineData(-10)]
-        public void RequestValidatorShouldThrowForInvalidCommitCount(int commitCount)
-        {
-            // Arrange
-            _request.CommitsSinceStableRelease = commitCount;
-
-            // Act
-            Action action = () => _systemUnderTest.ValidateRequest(_request);
-
-            // Assert
-            action.ShouldThrow<ArgumentException>()
-                  .And.ParamName
-                  .Should().Be(nameof(_request.CommitsSinceStableRelease));
         }
     }
 }

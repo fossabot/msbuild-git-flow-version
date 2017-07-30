@@ -38,12 +38,6 @@ namespace JarrodDavis.GitFlowVersion.Core
                 throw new ArgumentException("Stable release version cannot be a prerelease",
                     nameof(request.MostRecentStableReleaseVersion));
             }
-
-            if (request.CommitsSinceStableRelease < 0)
-            {
-                throw new ArgumentException("Commits since stable release must be non-negative",
-                    nameof(request.CommitsSinceStableRelease));
-            }
         }
     }
 }

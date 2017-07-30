@@ -40,7 +40,6 @@ namespace JarrodDavis.GitFlowVersion.Core
                 {
                     CurrentBranchName = request.CurrentBranchName,
                     BaseBranchName = request.BaseBranchName,
-                    CommitsSinceStableRelease = 0, // TODO
                     MostRecentStableReleaseVersion = new SemanticVersion(0, 0, 0)
                 };
             }
@@ -110,7 +109,7 @@ namespace JarrodDavis.GitFlowVersion.Core
                     minor: baseVersion.Minor,
                     patch: baseVersion.Patch,
                     releaseLabels: new[] { _prereleaseLabels.AlphaQuality, suffix },
-                    metadata: $"commits.{request.CommitsSinceStableRelease}"
+                    metadata: null
                 );
             }
 
