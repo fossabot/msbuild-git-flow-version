@@ -80,5 +80,46 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             resolvedVersion.Should().Be(request.MostRecentStableReleaseVersion,
                 because: $"the current commit on branch {branch} is tagged with version {stableVersion}");
         }
+
+        [Theory]
+        [InlineData("release/0.1.0", "0.1.0", null)]
+        [InlineData("rel/1.0.0", "1.0.0", "0.1.0")]
+        [InlineData("rc/1.1.0", "1.1.0", "1.0.1")]
+        public void ResolverShouldResolveReleaseCandidateVersionFromBranchSuffix(
+            string branch, string expectedVersionString, string stableVersionString)
+        {
+            // Arrange
+            var expectedVersion = SemanticVersion.Parse(expectedVersionString);
+            expectedVersion = new SemanticVersion(
+                major: expectedVersion.Major,
+                minor: expectedVersion.Minor,
+                patch: expectedVersion.Patch,
+                releaseLabel: "rc"
+            );
+            var stableVersion = stableVersionString is null
+                ? null
+                : SemanticVersion.Parse(stableVersionString);
+
+            var request = new VersionResolutionRequest
+            {
+                CurrentBranchName = branch,
+                BaseBranchName = "develop",
+                CommitsSinceStableRelease = 20,
+                MostRecentStableReleaseVersion = stableVersion
+            };
+
+            _validator.Setup(validator => validator.ValidateRequest(request));
+            _branchCategoryMapper.Setup(mapper => mapper.MapBranchName(branch))
+                                 .Returns((BranchCategory.ReleaseCandidate, expectedVersionString));
+
+            var systemUnderTest = ArrangeResolver();
+
+            // Act
+            var resolvedVersion = systemUnderTest.ResolveVersion(request);
+
+            // Assert
+            resolvedVersion.Should().Be(expectedVersion,
+                because: $"the current branch {branch} is a correctly-suffixed Release Candidate branch");
+        }
     }
 }
