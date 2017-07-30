@@ -1,6 +1,7 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using NuGet.Versioning;
 using Xunit;
@@ -11,17 +12,25 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
     {
         Mock<IBranchCategoryMapper> _branchCategoryMapper;
         Mock<ILogger<VersionResolver>> _logger;
+        IOptions<VersionPrereleaseLabelOptions> _options;
         Mock<IVersionResolutionRequestValidator> _validator;
 
         public VersionResolverTests()
         {
             _branchCategoryMapper = new Mock<IBranchCategoryMapper>();
             _logger = new Mock<ILogger<VersionResolver>>();
+            _options = Options.Create(new VersionPrereleaseLabelOptions
+            {
+                ReleaseCandidate = "rc",
+                BetaQuality = "beta",
+                AlphaQuality = "alpha"
+            });
             _validator = new Mock<IVersionResolutionRequestValidator>();
         }
 
         public VersionResolver ArrangeResolver() => new VersionResolver(_branchCategoryMapper.Object,
                                                                         _logger.Object,
+                                                                        _options,
                                                                         _validator.Object);
 
         [Fact]

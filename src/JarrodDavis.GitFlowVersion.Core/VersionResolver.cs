@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NuGet.Versioning;
 
 namespace JarrodDavis.GitFlowVersion.Core
@@ -8,14 +9,17 @@ namespace JarrodDavis.GitFlowVersion.Core
     {
         private IBranchCategoryMapper _branchCategoryMapper;
         private ILogger<VersionResolver> _logger;
+        private VersionPrereleaseLabelOptions _prereleaseLabels;
         private IVersionResolutionRequestValidator _validator;
 
         public VersionResolver(IBranchCategoryMapper branchCategoryMapper,
                                ILogger<VersionResolver> logger,
+                               IOptions<VersionPrereleaseLabelOptions> options,
                                IVersionResolutionRequestValidator validator)
         {
             _branchCategoryMapper = branchCategoryMapper;
             _logger = logger;
+            _prereleaseLabels = options.Value;
             _validator = validator;
         }
 
@@ -86,7 +90,7 @@ namespace JarrodDavis.GitFlowVersion.Core
                     major: baseVersion.Major,
                     minor: baseVersion.Minor,
                     patch: baseVersion.Patch,
-                    releaseLabels: new[] { "alpha", suffix },
+                    releaseLabels: new[] { _prereleaseLabels.AlphaQuality, suffix },
                     metadata: $"commits.{request.CommitsSinceStableRelease}"
                 );
             }
@@ -120,14 +124,22 @@ namespace JarrodDavis.GitFlowVersion.Core
                 major: previousStable.Major,
                 minor: previousStable.Minor + 1,
                 patch: 0,
-                releaseLabel: "beta"
+                releaseLabel: _prereleaseLabels.BetaQuality
             );
         }
 
         private SemanticVersion ResolveReleaseCandidate(string suffix)
         {
             _logger.LogDebug("Resolving Release Candidate version for branch suffix {suffix}", suffix);
-            return SemanticVersion.TryParse(suffix, out SemanticVersion version) ? version : null;
+
+            return !SemanticVersion.TryParse(suffix, out SemanticVersion version)
+                ? null
+                : new SemanticVersion(
+                    major: version.Major,
+                    minor: version.Minor,
+                    patch: version.Patch,
+                    releaseLabel: _prereleaseLabels.ReleaseCandidate
+                );
         }
     }
 }
