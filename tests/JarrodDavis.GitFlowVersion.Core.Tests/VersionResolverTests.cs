@@ -63,7 +63,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
                 CommitsSinceStableRelease = 0
             };
 
-            SetupDependencies(request, BranchCategory.Stable, branchSuffix: null);
+            SetupDependencies(request, BranchCategory.Stable);
             var systemUnderTest = ArrangeResolver();
 
             // Act
@@ -109,6 +109,40 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             VerifyAllMocks();
         }
 
+        [Theory]
+        [InlineData("develop", null, "0.1.0")]
+        [InlineData("dev", "0.1.0", "0.2.0")]
+        [InlineData("next", "0.1.1", "0.2.0")]
+        [InlineData("develop", "1.0.0", "1.1.0")]
+        [InlineData("dev", "1.0.1", "1.1.0")]
+        [InlineData("next", "1.1.0", "1.2.0")]
+        [InlineData("develop", "1.1.1", "1.2.0")]
+        public void ResolverShouldResolveBetaQualityVersionFromPreviousStableReleaseIncrement(
+            string branch, string stableVersionString, string expectedVersionString)
+        {
+            // Arrange
+            var expectedVersion = ParseExpectedPrereleaseVersion(expectedVersionString, "beta");
+            var stableVersion = ParseStableVersionString(stableVersionString);
+            var request = new VersionResolutionRequest
+            {
+                CurrentBranchName = branch,
+                BaseBranchName = "master",
+                CommitsSinceStableRelease = 5,
+                MostRecentStableReleaseVersion = stableVersion
+            };
+
+            SetupDependencies(request, BranchCategory.BetaQuality);
+            var systemUnderTest = ArrangeResolver();
+
+            // Act
+            var resolvedVersion = systemUnderTest.ResolveVersion(request);
+
+            // Assert
+            resolvedVersion.Should().Be(expectedVersion,
+                "because branch {0} should be strictly minor-version incremented from stable version {1}",
+                branch, stableVersion);
+        }
+
         private SemanticVersion ParseExpectedPrereleaseVersion(string expectedVersionString,
                                                                string prereleaseLabel)
         {
@@ -126,7 +160,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
 
         private void SetupDependencies(VersionResolutionRequest request,
                                        BranchCategory branchCategory,
-                                       string branchSuffix)
+                                       string branchSuffix = null)
         {
             _validator.Setup(validator => validator.ValidateRequest(request));
             _branchCategoryMapper.Setup(mapper => mapper.MapBranchName(request.CurrentBranchName))
