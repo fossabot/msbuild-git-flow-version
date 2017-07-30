@@ -129,9 +129,9 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("feature/add-cool-feature", "add-cool-feature")]
-        [InlineData("feature/123", "123")]
-        [InlineData("feature/PROJ-123", "PROJ-123")]
+        [InlineData("feature/add-cool-feature",                   "add-cool-feature")]
+        [InlineData("feature/123",                                "123")]
+        [InlineData("feature/PROJ-123",                           "PROJ-123")]
         [InlineData("feature/do-something-really-really-awesome", "do-something-really-really-awesome")]
         public void MapperShouldMapValidFeatureBranchName(string branchName, string expectedSuffix)
         {
@@ -167,9 +167,9 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("bugfix/fix-thing", "fix-thing")]
-        [InlineData("bugfix/124", "124")]
-        [InlineData("bugfix/PROJ-124", "PROJ-124")]
+        [InlineData("bugfix/fix-thing",                           "fix-thing")]
+        [InlineData("bugfix/124",                                 "124")]
+        [InlineData("bugfix/PROJ-124",                            "PROJ-124")]
         [InlineData("bugfix/fix-thing-that-is-broken-really-bad", "fix-thing-that-is-broken-really-bad")]
         public void MapperShouldMapValidBugfixBranchName(string branchName, string expectedSuffix)
         {

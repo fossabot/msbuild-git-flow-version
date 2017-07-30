@@ -47,9 +47,9 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("master", "0.1.0")]
+        [InlineData("master",     "0.1.0")]
         [InlineData("production", "1.0.0")]
-        [InlineData("trunk", "1.1.1")]
+        [InlineData("trunk",      "1.1.1")]
         public void ResolverShouldResolveStableVersionWithCurrentVersion(string branch,
                                                                          string stableVersionString)
         {
@@ -75,12 +75,12 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("release/0.1.0", "0.1.0", null)]
-        [InlineData("hotfix/0.1.1", "0.1.1", "0.1.0")]
-        [InlineData("rel/1.0.0", "1.0.0", "0.1.1")]
+        [InlineData("release/0.1.0",  "0.1.0", null)]
+        [InlineData("hotfix/0.1.1",   "0.1.1", "0.1.0")]
+        [InlineData("rel/1.0.0",      "1.0.0", "0.1.1")]
         [InlineData("quickfix/1.0.1", "1.0.1", "1.0.0")]
-        [InlineData("rc/1.1.0", "1.1.0", "1.0.1")]
-        [InlineData("hf/1.1.1", "1.1.1", "1.1.0")]
+        [InlineData("rc/1.1.0",       "1.1.0", "1.0.1")]
+        [InlineData("hf/1.1.1",       "1.1.1", "1.1.0")]
         public void ResolverShouldResolveReleaseCandidateVersionFromBranchSuffix(
             string branch, string expectedVersionSuffix, string stableVersionString)
         {
@@ -107,12 +107,12 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("develop", null, "0.1.0")]
-        [InlineData("dev", "0.1.0", "0.2.0")]
-        [InlineData("next", "0.1.1", "0.2.0")]
+        [InlineData("develop", null,    "0.1.0")]
+        [InlineData("dev",     "0.1.0", "0.2.0")]
+        [InlineData("next",    "0.1.1", "0.2.0")]
         [InlineData("develop", "1.0.0", "1.1.0")]
-        [InlineData("dev", "1.0.1", "1.1.0")]
-        [InlineData("next", "1.1.0", "1.2.0")]
+        [InlineData("dev",     "1.0.1", "1.1.0")]
+        [InlineData("next",    "1.1.0", "1.2.0")]
         [InlineData("develop", "1.1.1", "1.2.0")]
         public void ResolverShouldResolveBetaQualityVersionFromPreviousStableReleaseIncrement(
             string branch, string stableVersionString, string expectedVersionString)
@@ -140,20 +140,20 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("feature/add-cool-feature", null, "0.1.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature",  null,    "0.1.0", "add-cool-feature")]
         [InlineData("features/add-cool-feature", "0.1.0", "0.2.0", "add-cool-feature")]
-        [InlineData("feat/add-cool-feature", "0.1.1", "0.2.0", "add-cool-feature")]
-        [InlineData("feats/add-cool-feature", "1.0.0", "1.1.0", "add-cool-feature")]
-        [InlineData("feature/add-cool-feature", "1.0.1", "1.1.0", "add-cool-feature")]
+        [InlineData("feat/add-cool-feature",     "0.1.1", "0.2.0", "add-cool-feature")]
+        [InlineData("feats/add-cool-feature",    "1.0.0", "1.1.0", "add-cool-feature")]
+        [InlineData("feature/add-cool-feature",  "1.0.1", "1.1.0", "add-cool-feature")]
         [InlineData("features/add-cool-feature", "1.1.0", "1.2.0", "add-cool-feature")]
-        [InlineData("feat/add-cool-feature", "1.1.1", "1.2.0", "add-cool-feature")]
-        [InlineData("bugfix/fix-thing", null, "0.1.0", "fix-thing")]
-        [InlineData("bugfixes/fix-thing", "0.1.0", "0.2.0", "fix-thing")]
-        [InlineData("bug/fix-thing", "0.1.1", "0.2.0", "fix-thing")]
-        [InlineData("bugs/fix-thing", "1.0.0", "1.1.0", "fix-thing")]
-        [InlineData("bugfix/fix-thing", "1.0.1", "1.1.0", "fix-thing")]
-        [InlineData("bugfixes/fix-thing", "1.1.0", "1.2.0", "fix-thing")]
-        [InlineData("bug/fix-thing", "1.1.1", "1.2.0", "fix-thing")]
+        [InlineData("feat/add-cool-feature",     "1.1.1", "1.2.0", "add-cool-feature")]
+        [InlineData("bugfix/fix-thing",          null,    "0.1.0", "fix-thing")]
+        [InlineData("bugfixes/fix-thing",        "0.1.0", "0.2.0", "fix-thing")]
+        [InlineData("bug/fix-thing",             "0.1.1", "0.2.0", "fix-thing")]
+        [InlineData("bugs/fix-thing",            "1.0.0", "1.1.0", "fix-thing")]
+        [InlineData("bugfix/fix-thing",          "1.0.1", "1.1.0", "fix-thing")]
+        [InlineData("bugfixes/fix-thing",        "1.1.0", "1.2.0", "fix-thing")]
+        [InlineData("bug/fix-thing",             "1.1.1", "1.2.0", "fix-thing")]
         public void ResolverShouldResolveAlphaQualityVersionFromBetaQualityBase(
             string branch, string stableVersionString, string expectedVersionString, string branchSuffix)
         {
@@ -184,20 +184,20 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         }
 
         [Theory]
-        [InlineData("feature/add-cool-feature", null, "release/0.1.0", "add-cool-feature", "0.1.0")]
+        [InlineData("feature/add-cool-feature",  null,    "release/0.1.0",  "add-cool-feature", "0.1.0")]
         [InlineData("features/add-cool-feature", "0.1.0", "releases/0.2.0", "add-cool-feature", "0.2.0")]
-        [InlineData("feat/add-cool-feature", "0.1.1", "rel/0.2.0", "add-cool-feature", "0.2.0")]
-        [InlineData("feats/add-cool-feature", "1.0.0", "rels/1.1.0", "add-cool-feature", "1.1.0")]
-        [InlineData("feature/add-cool-feature", "1.0.1", "release/1.1.0", "add-cool-feature", "1.1.0")]
+        [InlineData("feat/add-cool-feature",     "0.1.1", "rel/0.2.0",      "add-cool-feature", "0.2.0")]
+        [InlineData("feats/add-cool-feature",    "1.0.0", "rels/1.1.0",     "add-cool-feature", "1.1.0")]
+        [InlineData("feature/add-cool-feature",  "1.0.1", "release/1.1.0",  "add-cool-feature", "1.1.0")]
         [InlineData("features/add-cool-feature", "1.1.0", "releases/1.2.0", "add-cool-feature", "1.2.0")]
-        [InlineData("feat/add-cool-feature", "1.1.1", "rel/1.2.0", "add-cool-feature", "1.2.0")]
-        [InlineData("bugfix/fix-thing", null, "release/0.1.0", "fix-thing", "0.1.0")]
-        [InlineData("bugfixes/fix-thing", "0.1.0", "releases/0.2.0", "fix-thing", "0.2.0")]
-        [InlineData("bug/fix-thing", "0.1.1", "rel/0.2.0", "fix-thing", "0.2.0")]
-        [InlineData("bugs/fix-thing", "1.0.0", "rels/1.1.0", "fix-thing", "1.1.0")]
-        [InlineData("bugfix/fix-thing", "1.0.1", "release/1.1.0", "fix-thing", "1.1.0")]
-        [InlineData("bugfixes/fix-thing", "1.1.0", "releases/1.2.0", "fix-thing", "1.2.0")]
-        [InlineData("bug/fix-thing", "1.1.1", "rel/1.2.0", "fix-thing", "1.2.0")]
+        [InlineData("feat/add-cool-feature",     "1.1.1", "rel/1.2.0",      "add-cool-feature", "1.2.0")]
+        [InlineData("bugfix/fix-thing",          null,    "release/0.1.0",  "fix-thing",        "0.1.0")]
+        [InlineData("bugfixes/fix-thing",        "0.1.0", "releases/0.2.0", "fix-thing",        "0.2.0")]
+        [InlineData("bug/fix-thing",             "0.1.1", "rel/0.2.0",      "fix-thing",        "0.2.0")]
+        [InlineData("bugs/fix-thing",            "1.0.0", "rels/1.1.0",     "fix-thing",        "1.1.0")]
+        [InlineData("bugfix/fix-thing",          "1.0.1", "release/1.1.0",  "fix-thing",        "1.1.0")]
+        [InlineData("bugfixes/fix-thing",        "1.1.0", "releases/1.2.0", "fix-thing",        "1.2.0")]
+        [InlineData("bug/fix-thing",             "1.1.1", "rel/1.2.0",      "fix-thing",        "1.2.0")]
         public void ResolverShouldResolveAlphaQualityVersionFromReleaseCandidateBase(
             string currentBranch, string stableVersionString, string baseBranch,
             string currentSuffix, string baseVersionSuffix)
