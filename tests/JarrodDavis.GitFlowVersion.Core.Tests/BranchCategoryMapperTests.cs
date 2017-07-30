@@ -1,6 +1,5 @@
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace JarrodDavis.GitFlowVersion.Core.Tests
@@ -11,17 +10,18 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
 
         public BranchCategoryMapperTests()
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
+            var options = Options.Create(new BranchCategoryMappingOptions
+            {
+                StableBranchName = "master",
+                BetaQualityBranchName = "develop",
+                FeatureBranchNamePrefix = "feature/",
+                BugfixBranchNamePrefix = "bugfix/",
+                ReleaseBranchNamePrefix = "release/",
+                HotfixBranchNamePrefix = "hotfix/",
+                DetachedHeadName = "DETACHED"
+            });
 
-            var serviceProvider = new ServiceCollection()
-                .AddOptions()
-                .Configure<BranchCategoryMappingOptions>(configuration.GetSection("BranchCategoryMapper"))
-                .AddSingleton<BranchCategoryMapper>()
-                .BuildServiceProvider();
-
-            _systemUnderTest = serviceProvider.GetRequiredService<BranchCategoryMapper>();
+            _systemUnderTest = new BranchCategoryMapper(options);
         }
 
         [Fact]

@@ -11,10 +11,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
     <PackageReference Include="FluentAssertions" Version="4.19.3" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.2" />
     <PackageReference Include="Moq" Version="4.7.99" />
     <PackageReference Include="System.ValueTuple" Version="4.3.1" />
@@ -24,7 +20,4 @@
     <ProjectReference Include="..\..\src\JarrodDavis.GitFlowVersion.Core\JarrodDavis.GitFlowVersion.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="appsettings.json" CopyToOutputDirectory="Always" />
-  </ItemGroup>
 </Project>
