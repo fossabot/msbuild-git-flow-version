@@ -6,15 +6,18 @@ namespace JarrodDavis.GitFlowVersion.Core
     public class VersionResolver : IVersionResolver
     {
         private IBranchCategoryMapper _branchCategoryMapper;
+        private IVersionResolutionRequestValidator _validator;
 
-        public VersionResolver(IBranchCategoryMapper branchCategoryMapper)
+        public VersionResolver(IBranchCategoryMapper branchCategoryMapper,
+                               IVersionResolutionRequestValidator validator)
         {
             _branchCategoryMapper = branchCategoryMapper;
+            _validator = validator;
         }
 
         public SemanticVersion ResolveVersion(VersionResolutionRequest request)
         {
-            ValidateRequest(request);
+            _validator.ValidateRequest(request);
 
             var match = _branchCategoryMapper.MapBranchName(request.CurrentBranchName);
 
@@ -32,48 +35,6 @@ namespace JarrodDavis.GitFlowVersion.Core
                     return request.MostRecentStableReleaseVersion;
                 default:
                     throw new NotImplementedException($"Unexpected branch category '${match.Category}'");
-            }
-        }
-
-        private void ValidateRequest(VersionResolutionRequest request)
-        {
-            if (request.CurrentBranchName is null)
-            {
-                throw new ArgumentNullException(nameof(request.CurrentBranchName));
-            }
-
-            if (request.BaseBranchName is null)
-            {
-                throw new ArgumentNullException(nameof(request.BaseBranchName));
-            }
-
-            if (request.MostRecentStableReleaseVersion is null)
-            {
-                throw new ArgumentNullException(nameof(request.MostRecentStableReleaseVersion));
-            }
-
-            if (string.IsNullOrWhiteSpace(request.CurrentBranchName))
-            {
-                throw new ArgumentException("Current branch name cannot be empty or whitespace",
-                    nameof(request.CurrentBranchName));
-            }
-
-            if (string.IsNullOrWhiteSpace(request.BaseBranchName))
-            {
-                throw new ArgumentException("Base branch name cannot be empty or whitespace",
-                    nameof(request.BaseBranchName));
-            }
-
-            if (request.MostRecentStableReleaseVersion.IsPrerelease)
-            {
-                throw new ArgumentException("Stable release version cannot be a prerelease",
-                    nameof(request.MostRecentStableReleaseVersion));
-            }
-
-            if (request.CommitsSinceStableRelease < 0)
-            {
-                throw new ArgumentException("Commits since stable release must be non-negative",
-                    nameof(request.CommitsSinceStableRelease));
             }
         }
 

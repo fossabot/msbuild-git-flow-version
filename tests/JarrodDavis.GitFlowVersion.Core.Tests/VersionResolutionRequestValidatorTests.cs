@@ -5,14 +5,14 @@ using Xunit;
 
 namespace JarrodDavis.GitFlowVersion.Core.Tests
 {
-    public class VersionResolverTests
+    public class VersionResolutionRequestValidatorTests
     {
-        private VersionResolver _systemUnderTest;
+        private VersionResolutionRequestValidator _systemUnderTest;
         private VersionResolutionRequest _request;
 
-        public VersionResolverTests()
+        public VersionResolutionRequestValidatorTests()
         {
-            _systemUnderTest = new VersionResolver(null);
+            _systemUnderTest = new VersionResolutionRequestValidator();
             _request = new VersionResolutionRequest
             {
                 CurrentBranchName = "feature/add-cool-feature",
@@ -26,13 +26,13 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void VersionResolverShouldThrowForInvalidCurrentBranchName(string branchName)
+        public void RequestValidatorShouldThrowForInvalidCurrentBranchName(string branchName)
         {
             // Arrange
             _request.BaseBranchName = branchName;
 
             // Act
-            Action action = () => _systemUnderTest.ResolveVersion(_request);
+            Action action = () => _systemUnderTest.ValidateRequest(_request);
 
             // Assert
             action.ShouldThrow<ArgumentException>()
@@ -44,13 +44,13 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void VersionResolverShouldThrowForInvalidBaseBranchName(string branchName)
+        public void RequestValidatorShouldThrowForInvalidBaseBranchName(string branchName)
         {
             // Arrange
             _request.CurrentBranchName = branchName;
 
             // Act
-            Action action = () => _systemUnderTest.ResolveVersion(_request);
+            Action action = () => _systemUnderTest.ValidateRequest(_request);
 
             // Assert
             action.ShouldThrow<ArgumentException>()
@@ -62,7 +62,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData(null)]
         [InlineData("0.1.0-preview4")]
         [InlineData("1.0.0-rc")]
-        public void VersionResolverShouldThrowForInvalidStableVersion(string semanticVersionString)
+        public void RequestValidatorShouldThrowForInvalidStableVersion(string semanticVersionString)
         {
             // Arrange
             _request.MostRecentStableReleaseVersion = semanticVersionString is null
@@ -70,7 +70,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
                 : SemanticVersion.Parse(semanticVersionString);
 
             // Act
-            Action action = () => _systemUnderTest.ResolveVersion(_request);
+            Action action = () => _systemUnderTest.ValidateRequest(_request);
 
             // Assert
             action.ShouldThrow<ArgumentException>()
@@ -82,13 +82,13 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         [InlineData(-1)]
         [InlineData(-5)]
         [InlineData(-10)]
-        public void VersionResolverShouldThrowForInvalidCommitCount(int commitCount)
+        public void RequestValidatorShouldThrowForInvalidCommitCount(int commitCount)
         {
             // Arrange
             _request.CommitsSinceStableRelease = commitCount;
 
             // Act
-            Action action = () => _systemUnderTest.ResolveVersion(_request);
+            Action action = () => _systemUnderTest.ValidateRequest(_request);
 
             // Assert
             action.ShouldThrow<ArgumentException>()
