@@ -1,7 +1,8 @@
 version: 1.0.{build}
 image: Visual Studio 2017
-build_script:
+install:
 - ps: dotnet restore
+build_script:
 - ps: dotnet build
 test_script:
 - ps: dotnet test $(Get-ChildItem tests\**\*.Tests.csproj)
