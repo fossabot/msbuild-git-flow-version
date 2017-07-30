@@ -77,8 +77,11 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
 
         [Theory]
         [InlineData("release/0.1.0", "0.1.0", null)]
-        [InlineData("rel/1.0.0", "1.0.0", "0.1.0")]
+        [InlineData("hotfix/0.1.1", "0.1.1", "0.1.0")]
+        [InlineData("rel/1.0.0", "1.0.0", "0.1.1")]
+        [InlineData("quickfix/1.0.1", "1.0.1", "1.0.0")]
         [InlineData("rc/1.1.0", "1.1.0", "1.0.1")]
+        [InlineData("hf/1.1.1", "1.1.1", "1.1.0")]
         public void ResolverShouldResolveReleaseCandidateVersionFromBranchSuffix(
             string branch, string expectedVersionSuffix, string stableVersionString)
         {
