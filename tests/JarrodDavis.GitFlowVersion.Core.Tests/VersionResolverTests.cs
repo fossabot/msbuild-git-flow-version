@@ -183,6 +183,51 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             VerifyAllMocks();
         }
 
+        [Theory]
+        [InlineData("feature/add-cool-feature", null, "release/0.1.0", "add-cool-feature", "0.1.0")]
+        [InlineData("feature/add-cool-feature", "0.1.0", "release/0.2.0", "add-cool-feature", "0.2.0")]
+        [InlineData("feature/add-cool-feature", "0.1.1", "release/0.2.0", "add-cool-feature", "0.2.0")]
+        [InlineData("feature/add-cool-feature", "1.0.0", "release/1.1.0", "add-cool-feature", "1.1.0")]
+        [InlineData("feature/add-cool-feature", "1.0.1", "release/1.1.0", "add-cool-feature", "1.1.0")]
+        [InlineData("feature/add-cool-feature", "1.1.0", "release/1.2.0", "add-cool-feature", "1.2.0")]
+        [InlineData("feature/add-cool-feature", "1.1.1", "release/1.2.0", "add-cool-feature", "1.2.0")]
+        [InlineData("bugfix/fix-thing", null, "release/0.1.0", "fix-thing", "0.1.0")]
+        [InlineData("bugfix/fix-thing", "0.1.0", "release/0.2.0", "fix-thing", "0.2.0")]
+        [InlineData("bugfix/fix-thing", "0.1.1", "release/0.2.0", "fix-thing", "0.2.0")]
+        [InlineData("bugfix/fix-thing", "1.0.0", "release/1.1.0", "fix-thing", "1.1.0")]
+        [InlineData("bugfix/fix-thing", "1.0.1", "release/1.1.0", "fix-thing", "1.1.0")]
+        [InlineData("bugfix/fix-thing", "1.1.0", "release/1.2.0", "fix-thing", "1.2.0")]
+        [InlineData("bugfix/fix-thing", "1.1.1", "release/1.2.0", "fix-thing", "1.2.0")]
+        public void ResolverShouldResolveAlphaQualityVersionFromReleaseCandidateBase(
+            string currentBranch, string stableVersionString, string baseBranch,
+            string currentSuffix, string baseVersionSuffix)
+        {
+            // Arrange
+            var expectedVersion = ParseExpectedPrereleaseVersion(
+                baseVersionSuffix, "alpha", currentSuffix);
+            var stableVersion = ParseStableVersionString(stableVersionString);
+            var request = new VersionResolutionRequest
+            {
+                CurrentBranchName = currentBranch,
+                BaseBranchName = baseBranch,
+                MostRecentStableReleaseVersion = stableVersion
+            };
+
+            SetupDependencies(request, BranchCategory.AlphaQuality, currentSuffix);
+            _branchCategoryMapper.Setup(mapper => mapper.MapBranchName(baseBranch))
+                                 .Returns((BranchCategory.ReleaseCandidate, baseVersionSuffix));
+            var systemUnderTest = ArrangeResolver();
+
+            // Act
+            var resolvedVersion = systemUnderTest.ResolveVersion(request);
+
+            // Assert
+            resolvedVersion.Should().Be(expectedVersion,
+                "because branch {0} should use version from correctly-suffixed Release Candidate branch {1}",
+                currentBranch, baseBranch);
+            VerifyAllMocks();
+        }
+
         private SemanticVersion ParseExpectedPrereleaseVersion(string expectedVersionString,
                                                                params string[] prereleaseLabels)
         {
