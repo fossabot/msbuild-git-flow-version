@@ -23,14 +23,15 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
         public void ResolverShouldThrowForInvalidArguments()
         {
             // Arrange
-            _validator.Setup(validator => validator.ValidateRequest(It.IsAny<VersionResolutionRequest>()))
+            var request = new VersionResolutionRequest();
+            _validator.Setup(validator => validator.ValidateRequest(request))
                       .Throws<ArgumentException>();
             var systemUnderTest = new VersionResolver(_branchCategoryMapper.Object,
                                                       _logger.Object,
                                                       _validator.Object);
 
             // Act
-            Action action = () => systemUnderTest.ResolveVersion(new VersionResolutionRequest());
+            Action action = () => systemUnderTest.ResolveVersion(request);
 
             // Assert
             action.ShouldThrow<ArgumentException>(because: "the validator threw an exception");
