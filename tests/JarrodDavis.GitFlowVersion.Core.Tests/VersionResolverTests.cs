@@ -72,6 +72,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             // Assert
             resolvedVersion.Should().Be(request.MostRecentStableReleaseVersion,
                 because: $"the current commit on branch {branch} is tagged with version {stableVersion}");
+            VerifyAllMocks();
         }
 
         [Theory]
@@ -102,6 +103,7 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
             // Assert
             resolvedVersion.Should().Be(expectedVersion,
                 because: $"the current branch {branch} is a correctly-suffixed Release Candidate branch");
+            VerifyAllMocks();
         }
 
         private SemanticVersion ParseExpectedPrereleaseVersion(string expectedVersionString,
@@ -132,5 +134,11 @@ namespace JarrodDavis.GitFlowVersion.Core.Tests
                                                                          _logger.Object,
                                                                          _options,
                                                                          _validator.Object);
+
+        private void VerifyAllMocks()
+        {
+            _validator.VerifyAll();
+            _branchCategoryMapper.VerifyAll();
+        }
     }
 }
